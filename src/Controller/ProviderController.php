@@ -4,8 +4,8 @@ namespace App\Controller;
 use App\Entity\Provider;
 use App\Form\ProviderFormType;
 use App\Form\OptionFormType;
+use App\Form\IdFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +26,7 @@ class ProviderController extends AbstractController
         $data = $form->get('option')->getData();
 
         $min = $data >=1;
-        $max = $data <=4;
+        $max = $data <=5;
 
         if ($form->isSubmitted() && $form->isValid() && $min && $max)
         {    
@@ -35,19 +35,21 @@ class ProviderController extends AbstractController
                 return $this->redirectToRoute("new_provider");
             }
 
-            else if ($data == 2 )
+            else if ($data == 2 || $data == 3)
             {
-                return $this->redirectToRoute('edit_provider');
-            }
+                #return $this->redirectToRoute("choice_id_edit");
+                return $this->redirect($this->generateUrl("choice_edit_delete", array("data" => $data)));
 
-            else if ($data == 3 )
-            {
-                return $this->redirectToRoute('remove_provider');
             }
 
             else if ($data == 4)
             {
-                return $this->redirectToRoute('list_providers');
+                return $this->redirect("providers_list");
+            }
+
+            else if ($data == 5)
+            {
+                return $this->redirect("provider_list");
             }
 
         }
@@ -87,39 +89,110 @@ class ProviderController extends AbstractController
         }
 
         return $this->render('new_provider.html.twig', array('provider_form'=> $provider_form->createView()));
-        $provider_form-> handleRequest($request);
     }
 
-    public function edit_provider(Request $request): Response
+   
+/**
+    * @Route("/edit_provider/{provider_id}", name ="edit_provider")
+    */
+    public function edit_provider(Request $request, $provider_id): Response
     {
-        $provider = new Provider();
-        $provider_form = $this->createForm(ProviderFormType::class, $provider);
-        return $this->render('new_provider.html.twig', array('provider_form'=> $provider_form->createView()));
-        $provider_form-> handleRequest($request);
-    }
+        if (!$provider_id) {
+            throw $this->createNotFoundException('No sha trobat cap proveïdor amb aquest ID');
+        }
 
-    public function remove_provider(Request $request): Response
-    {
         $provider = new Provider();
         $provider_form = $this->createForm(ProviderFormType::class, $provider);
-        return $this->render('new_provider.html.twig', array('provider_form'=> $provider_form->createView()));
         $provider_form-> handleRequest($request);
+
+        if ($provider_form->isSubmitted() && $provider_form->isValid())
+        {   
+            $name = $provider_form->get('name')->getData();
+            $email = $provider_form->get('email')->getData();
+            $phone = $provider_form->get('phone')->getData();
+            $provider_type = $provider_form->get('provider_type')->getData();
+            $active = $provider_form->get('active')->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $provider = $em->getRepository(Provider::class)->find($provider_id);
+            $provider->setName($name);
+            $provider->setEmail($email);
+            $provider->setPhone($phone);
+            $provider->setProviderType($provider_type);
+            $provider->setActive($active);
+            $em->flush();
+
+            return new Response('El proveïdor amb ID: '.$provider_id.' sha editat correctament');
+        }
+
+        return $this->render('edit_provider.html.twig', array('provider_form'=> $provider_form->createView()));
+
     }
 
     /**
-    * @Route("/list_providers",name ="list_providers")
+    * @Route("/delete_provider/{provider_id}", name ="delete_provider")
     */
-
-    public function list_providers(ManagerRegistry $doctrine, int $id): Response
+    public function delete_provider($provider_id): Response
     {
-        $provider = $doctrine->getRepository(Provider::class)->find($id);
+        if (!$provider_id) {
+            throw $this->createNotFoundException('No sha trobat cap proveïdor amb aquest ID');
+        }
+        $em = $this->getDoctrine()->getManager();
+        $provider = $em->getRepository(Provider::class)->find($provider_id);
+        $em->remove($provider);
+        $em->flush();
 
-        if (!$provider) {
-            throw $this->createNotFoundException(
-                'No product found for id '.$id
-            );
+        return new Response('El proveïdor amb ID: '.$provider_id.' sha eliminat correctament');
+
+    }
+
+    /**
+    * @Route("/provider_list"), name="provider_list")
+    */
+    public function provider_list(ManagerRegistry $doctrine)
+    {
+        $provider = $doctrine->getRepository(Provider::class)->find(22);
+
+        return new Response('Check out this great product: '.$provider->getName().$provider->getEmail());
+    
+    }
+
+
+     /**
+    * @Route("/providers_list"), name="providers_list")
+    */
+    public function providers_list(ManagerRegistry $doctrine)
+    {
+        $provider = $doctrine->getRepository(Provider::class)->find(22);
+
+        return new Response();
+    
+    }
+
+
+
+    /**
+    * @Route("/choice_edit_delete/{data}", name ="choice_edit_delete")
+    */
+    public function choice_edit_delete(Request $request, $data): Response
+    {
+        $defaultData = ['message' => 'ID a cercar'];
+        $id_form = $this->createForm(IdFormType::class, $defaultData);
+        $id_form-> handleRequest($request);
+        $provider_id = $id_form->get('provider_id')->getData();
+        
+        if ($id_form->isSubmitted() && $id_form->isValid())
+        {   
+            if ($data == 2)
+            {
+                return $this->redirect($this->generateUrl("edit_provider", array("provider_id" => $provider_id)));
+            }
+            else if ( $data == 3)
+            {
+                return $this->redirect($this->generateUrl("delete_provider", array("provider_id" => $provider_id)));
+            }
         }
 
-        return new Response('Check out this great product: '.$provider->getName());
+        return $this->render('provider_id.html.twig', array('id_form'=> $id_form->createView()));
     }
 }

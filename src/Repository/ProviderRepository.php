@@ -50,7 +50,7 @@ class ProviderRepository extends ServiceEntityRepository
     // /**
     //  * @return Provider[] Returns an array of Provider objects
     //  */
-    /*
+    
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('p')
@@ -62,7 +62,7 @@ class ProviderRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Provider

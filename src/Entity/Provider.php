@@ -103,4 +103,9 @@ class Provider
    {
        $this -> id = $id;
    }
+
+   public function getProvider()
+   {
+        return $this -> this;
+   }
 }
