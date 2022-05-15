@@ -9,11 +9,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * This class implements all those methods to manage the HTTP petitions in order to 
+ * process and answer them.  
+ * @author  Marc Roigé
+ * @version 14/5/2022
+ */
 class ProviderController extends AbstractController
 {
    /**
+    * This function generates the main menu where the user can select an option of the 
+    * shown list 
+    * @param request Allow us to handle the request
     * @Route("/", name ="main_menu")
     */
     public function main_menu(Request $request): Response
@@ -37,7 +45,6 @@ class ProviderController extends AbstractController
 
             else if ($data == 2 || $data == 3)
             {
-                #return $this->redirectToRoute("choice_id_edit");
                 return $this->redirect($this->generateUrl("choice_edit_delete", array("data" => $data)));
 
             }
@@ -63,45 +70,52 @@ class ProviderController extends AbstractController
     }
 
     /**
+     * This function provides us the form fields to create a new provider.
+     * @param request Allow us to handle the request
     * @Route("/new_provider",name ="new_provider")
     */
     public function new_provider(Request $request): Response
-    {
+    {   
+        
         $provider = new Provider();
         $provider_form = $this->createForm(ProviderFormType::class, $provider);
         $provider_form-> handleRequest($request);
 
         if ($provider_form->isSubmitted() && $provider_form->isValid())
-        {
+        { 
+            $time = date('H:i:s \O\n d/m/Y');
             $em = $this->getDoctrine()->getManager();
             $em->persist($provider);
             $em->flush();
 
             return new Response('El proveïdor amb id:'.$provider->getId().' sha guardat correctament a la BD amb les següents dades:'.'<br>'.
-            $provider->getName().'<br>'.$provider->getEmail().'<br>'.$provider->getPhone().'<br>'.$provider->getProviderType()
-            .'<br>'.$provider->getActive());
+            'Nom: '.$provider->getName().'<br>'.'Email: '.$provider->getEmail().'<br>'.'Phone: '.$provider->getPhone().
+            '<br>'.'TipusProveïdor(1-Hotel/2-Pista/3-Complement): '.$provider->getProviderType()
+            .'<br>'.'Actiu (1-Activat/0-Desactivat): '.$provider->getActive().'<br>'.'Moment de creació: '.$time);
 
         }
-
-        return $this->render('new_provider.html.twig', array('provider_form'=> $provider_form->createView()));
+        return $this->render('new_provider.html.twig', array(
+            'provider_form'=> $provider_form->createView()
+        ));
     }
 
    
-/**
+    /**
+    * This function allow us to edit a provider. It asks us again for the provider form
+    * fields in order to generate the edition. 
+    * @param request Allow us to handle the request
+    * @param provider_id Id of the object we want to edit
     * @Route("/edit_provider/{provider_id}", name ="edit_provider")
     */
     public function edit_provider(Request $request, $provider_id): Response
     {
-        if (!$provider_id) {
-            throw $this->createNotFoundException('No sha trobat cap proveïdor amb aquest ID');
-        }
-
         $provider = new Provider();
         $provider_form = $this->createForm(ProviderFormType::class, $provider);
         $provider_form-> handleRequest($request);
 
         if ($provider_form->isSubmitted() && $provider_form->isValid())
         {   
+            $time = date('H:i:s \O\n d/m/Y');
             $name = $provider_form->get('name')->getData();
             $email = $provider_form->get('email')->getData();
             $phone = $provider_form->get('phone')->getData();
@@ -117,7 +131,8 @@ class ProviderController extends AbstractController
             $provider->setActive($active);
             $em->flush();
 
-            return new Response('El proveïdor amb ID: '.$provider_id.' sha editat correctament');
+            return new Response('El proveïdor amb ID: '.$provider_id.' sha editat correctament'
+            .'<br>'."Moment de l'edició: ".$time);
         }
 
         return $this->render('edit_provider.html.twig', array('provider_form'=> $provider_form->createView()));
@@ -125,13 +140,12 @@ class ProviderController extends AbstractController
     }
 
     /**
+    * Removes the provider (ID) passed by parameter
+    * @param provider_id ID of the object we want to remove of our system
     * @Route("/delete_provider/{provider_id}", name ="delete_provider")
     */
     public function delete_provider($provider_id): Response
     {
-        if (!$provider_id) {
-            throw $this->createNotFoundException('No sha trobat cap proveïdor amb aquest ID');
-        }
         $em = $this->getDoctrine()->getManager();
         $provider = $em->getRepository(Provider::class)->find($provider_id);
         $em->remove($provider);
@@ -142,6 +156,7 @@ class ProviderController extends AbstractController
     }
 
      /**
+    * Show the providers list we have in our system
     * @Route("/providers_list"), name="providers_list")
     */
     public function providers_list():Response
@@ -150,11 +165,6 @@ class ProviderController extends AbstractController
         ->getRepository(Provider::class)
         ->findAll();
 
-    if (!$providers) {
-        throw $this->createNotFoundException(
-            'No sha trobat cap proveïdor en el sistema'
-        );
-    }
 
     return $this->render(
         'providers_list.html.twig',
@@ -164,6 +174,9 @@ class ProviderController extends AbstractController
     }
 
     /**
+    * Generates an Integer field in order to allow the user to select the ID of the object
+    * @param request Allow us to handle the request
+    * @param data Specify if we are in the edit or delete option.
     * @Route("/choice_edit_delete/{data}", name ="choice_edit_delete")
     */
     public function choice_edit_delete(Request $request, $data): Response

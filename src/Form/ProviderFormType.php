@@ -9,6 +9,11 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+/**
+ * This class defines the ProviderFormType. It will contain name field (TextType),
+ * email (TextType), phone (IntegerType), provider_type (ChoiceType), 
+ * an active (ChoiceType) and a submit button
+ */
 class ProviderFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
