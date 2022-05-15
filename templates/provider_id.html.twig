@@ -1,0 +1,26 @@
+{# Template that defines the provider's id form #}
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Aplicació de gestió de proveïdors
+{% endblock %}
+
+{% block body %}
+<html>
+
+<head>
+    <title> Aplicació de gestió de proveïdors </title>
+</head>
+
+<body>
+        <h1> Escull l'id del proveïdor que vols cercar:</h1>   
+    <p>
+        {{form_start(id_form)}}
+        {{form_widget(id_form)}}
+        {{form_end(id_form)}}
+    </p>
+
+</body>
+</html>
+ 
+{% endblock %}

@@ -1,0 +1,36 @@
+{# This template shows the provider's list that we have in our system #}
+
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Aplicació de gestió de proveïdors
+{% endblock %}
+
+{% block body %}
+<html>
+
+<head>
+    <title> Aplicació de gestió de proveïdors </title>
+</head>
+
+<body>
+        <h1> Llistat de proveïdors que tenim al sistema:</h1>   
+    <p>
+        {% for provider in providers %}
+
+        Id: {{ provider.id }}
+        Nom: {{ provider.name }}
+        Email: {{ provider.email }}
+        Phone: {{ provider.phone }}
+        TipusProveïdor: {{ provider.providerType }}
+        Actiu: {{ provider.active }}
+        <br>
+        <br>
+
+        {% endfor %}
+    </p>
+
+</body>
+</html>
+ 
+{% endblock %}

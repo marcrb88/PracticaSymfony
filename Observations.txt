@@ -1,0 +1,20 @@
+After the realitzation of this incorporation project I would like to highlight several points:
+
+1. I would have liked emphasize more in the dessign ambit. Such as CSS, JavaScript to provide
+a better visual impact on my project 
+
+2. I am aware that there's a lack of control structures (check ID's random integer and you will
+see it exists, for example)
+
+3. Point 1 and 2 have to take into consideration that: 
+    1. I haven't had the time I would have liked to dedicate to this evaluation test :(
+    2. It was the first time that I programmed in PHP and, definitely, with Symfony framework.
+
+4. However, I think I have satisfied the main required points that this evaluation project presents.
+
+
+
+
+
+
+
