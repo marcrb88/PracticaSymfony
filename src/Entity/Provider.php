@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\ProviderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ProviderRepository::class)
+ * @ORM\Entity(repositoryClass="App\Repository\ProviderRepository")
  */
 class Provider
 {
@@ -28,7 +27,7 @@ class Provider
    private $email;
 
     /**
-    * @ORM\Column(type="integer")
+    * @ORM\Column(type="integer", length=12)
     */
    private $phone;
 
@@ -104,8 +103,4 @@ class Provider
        $this -> id = $id;
    }
 
-   public function getProvider()
-   {
-        return $this -> this;
-   }
 }

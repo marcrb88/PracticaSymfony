@@ -51,11 +51,11 @@ class ProviderRepository extends ServiceEntityRepository
     //  * @return Provider[] Returns an array of Provider objects
     //  */
     
-    public function findByExampleField($value)
+    public function findByProviderField($currentProvider)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('p.provider = :val')
+            ->setParameter('val', $currentProvider)
             ->orderBy('p.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()

@@ -26,7 +26,7 @@ class ProviderController extends AbstractController
         $data = $form->get('option')->getData();
 
         $min = $data >=1;
-        $max = $data <=5;
+        $max = $data <=4;
 
         if ($form->isSubmitted() && $form->isValid() && $min && $max)
         {    
@@ -45,11 +45,6 @@ class ProviderController extends AbstractController
             else if ($data == 4)
             {
                 return $this->redirect("providers_list");
-            }
-
-            else if ($data == 5)
-            {
-                return $this->redirect("provider_list");
             }
 
         }
@@ -146,30 +141,27 @@ class ProviderController extends AbstractController
 
     }
 
-    /**
-    * @Route("/provider_list"), name="provider_list")
-    */
-    public function provider_list(ManagerRegistry $doctrine)
-    {
-        $provider = $doctrine->getRepository(Provider::class)->find(22);
-
-        return new Response('Check out this great product: '.$provider->getName().$provider->getEmail());
-    
-    }
-
-
      /**
     * @Route("/providers_list"), name="providers_list")
     */
-    public function providers_list(ManagerRegistry $doctrine)
+    public function providers_list():Response
     {
-        $provider = $doctrine->getRepository(Provider::class)->find(22);
+        $providers = $this->getDoctrine()
+        ->getRepository(Provider::class)
+        ->findAll();
 
-        return new Response();
-    
+    if (!$providers) {
+        throw $this->createNotFoundException(
+            'No sha trobat cap proveïdor en el sistema'
+        );
     }
 
-
+    return $this->render(
+        'providers_list.html.twig',
+        array('providers' => $providers)
+    );
+    
+    }
 
     /**
     * @Route("/choice_edit_delete/{data}", name ="choice_edit_delete")
