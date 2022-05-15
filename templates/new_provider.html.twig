@@ -1,0 +1,26 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Aplicació de gestió de proveïdors
+{% endblock %}
+
+{% block body %}
+<html>
+
+<head>
+    <title> Aplicació de gestió de proveïdors </title>
+</head>
+
+<body>
+        <h1> Omple els següents camps referents al nou proveïdor </h1>   
+    <p>
+        {{form_start(provider_form)}}
+        {{form_widget(provider_form)}}
+        {{form_end(provider_form)}}
+    </p>
+
+</body>
+</html>
+ 
+{% endblock %}
+

@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Aplicació de gestió de proveïdors
+{% endblock %}
+
+{% block body %}
+<html>
+
+<head>
+    <title> Aplicació de gestió de proveïdors </title>
+</head>
+
+<body>
+        <h1> Benvinguts a l'aplicació de gestió de proveïdors </h1>   
+    <h2> Selecciona una de les opcions que es mostren a continuació</h2>
+    <p>
+        1. Crear un nou proveïdor <br>
+        2. Editar un proveïdor <br>
+        3. Eliminar un proveïdor <br>
+        4. Visualitzar el llistat de proveïdors </br>
+        {{form_start(option_form)}}
+        {{form_widget(option_form)}}
+        {{form_end(option_form)}}
+
+        {% for message in app.flashes('error') %}
+                {{ message }}
+        {% endfor %}
+            
+    </p>
+
+</body>
+</html>
+ 
+{% endblock %}
+
